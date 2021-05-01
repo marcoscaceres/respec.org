@@ -87,8 +87,9 @@ export function search(
 export function searchOne(
   query: Query,
   store: Store,
-  options = defaultOptions,
+  opts: Partial<Options> = {},
 ) {
+  const options = { ...defaultOptions, ...opts };
   normalizeQuery(query, options);
 
   const filtered = filter(query, store, options);

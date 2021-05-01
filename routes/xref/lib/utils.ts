@@ -65,6 +65,7 @@ export function* textVariations(term: string) {
 }
 
 export function pickFields<T>(item: T, fields: (keyof T)[]) {
+  if (!fields.length) return item;
   const result: Partial<T> = {};
   for (const field of fields) {
     result[field] = item[field];
