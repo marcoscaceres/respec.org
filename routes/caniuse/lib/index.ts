@@ -44,7 +44,7 @@ export async function createResponseBody(options: Options) {
       return await createResponseBodyJSON(opts);
     case "html":
     default:
-      return await createResponseBodyHTML(opts);
+      return await createResponseBodyHTML(opts.feature, opts.browsers);
   }
 }
 
@@ -67,8 +67,10 @@ export async function createResponseBodyJSON(options: NormalizedOptions) {
   return response;
 }
 
-export async function createResponseBodyHTML(options: NormalizedOptions) {
-  const { feature, browsers } = options;
+export async function createResponseBodyHTML(
+  feature: string,
+  browsers: string[],
+) {
   const allData = await getData(feature);
   if (!allData) {
     return null;
@@ -82,7 +84,7 @@ export async function createResponseBodyHTML(options: NormalizedOptions) {
   for (const browser of browsers) {
     data[browser] = allData.summary[browser] || [];
   }
-  return formatAsHTML(options, data);
+  return formatAsHTML(feature, data);
 }
 
 function normalizeOptions(options: Options): NormalizedOptions {
@@ -94,7 +96,7 @@ function normalizeOptions(options: Options): NormalizedOptions {
   return { feature, versions, browsers, format };
 }
 
-function sanitizeBrowsersList(browsers?: string | string[]) {
+export function sanitizeBrowsersList(browsers?: string | string[]) {
   if (!Array.isArray(browsers)) {
     if (browsers === "all") return [];
     return defaultOptions.browsers;
@@ -123,10 +125,7 @@ async function getData(feature: string) {
   }
 }
 
-function formatAsHTML(
-  options: NormalizedOptions,
-  data: Data["summary"],
-): string {
+function formatAsHTML(feature: string, data: Data["summary"]): string {
   const getSupportTitle = (keys: SupportKeys) => {
     return keys
       .filter(key => SUPPORT_TITLES.has(key))
@@ -172,7 +171,7 @@ function formatAsHTML(
     renderBrowser(browser, browserData),
   )}`;
 
-  const featureURL = new URL(options.feature, "https://caniuse.com/").href;
+  const featureURL = new URL(feature, "https://caniuse.com/").href;
   const moreInfo = html`<a href="${featureURL}">More info</a>`;
 
   return html`${browsers} ${moreInfo}`.toString();

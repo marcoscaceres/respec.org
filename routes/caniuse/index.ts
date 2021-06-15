@@ -7,10 +7,12 @@ import { env, seconds } from "../../utils/misc.js";
 
 import { createResponseBody } from "./lib/index.js";
 import updateRoute from "./update.js";
+import caniuseRoute from "./caniuse.js";
 
 const caniuse = Router({ mergeParams: true });
 
 caniuse.get("/", cors(), route);
+caniuse.get("/:feature", cors(), caniuseRoute);
 caniuse.post("/update", authGithubWebhook(env("CANIUSE_SECRET")), updateRoute);
 
 export default caniuse;
