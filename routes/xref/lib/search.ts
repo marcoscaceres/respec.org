@@ -137,7 +137,7 @@ function filterByTerm(query: Query, store: Store) {
   if (inputTerm === '""') term = "";
 
   let termData = store.byTerm[term] || [];
-  if (!termData.length && shouldTreatAsConcept) {
+  if (!termData.length || shouldTreatAsConcept) {
     for (const altTerm of textVariations(term)) {
       if (altTerm in store.byTerm) {
         termData = store.byTerm[altTerm];
